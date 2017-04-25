@@ -84,7 +84,6 @@ bmwiremote.prototype.getServices = function() {
 
 bmwiremote.prototype.getauth = function (callback) {
 	if (this.needsAuthRefresh()) {
-		if (this.refreshToken === ""){
 			request.put({
 				url: 'https://b2vapi.bmwgroup.us/webapi/oauth/token/',
 				headers: {
@@ -114,9 +113,6 @@ bmwiremote.prototype.getauth = function (callback) {
 				 callback(err);
 				}
 		);
-		}else{
-			//refresh via token
-		}
 	}
 
 },
