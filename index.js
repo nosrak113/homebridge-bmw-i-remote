@@ -57,7 +57,7 @@ bmwiremote.prototype.lockRequest = function(state, callback) {
 		this.getauth(function(err){
 			if (err){ callback(err);}
 			else {
-				var callLockstate = (lockState == "lock") ? "DOOR_LOCK" : "DOOR_UNLOCK";
+				var callLockstate = (state == "lock") ? "DOOR_LOCK" : "DOOR_UNLOCK";
 				request.get({
 					url: 'https://b2vapi.bmwgroup.us/webapi/v1/user/vehicles/' + this.vin + '/serviceExecutionStatus?serviceType=' + callLockstate,
 					headers: {
