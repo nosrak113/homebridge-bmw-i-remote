@@ -48,9 +48,9 @@ bmwiremote.prototype.getState = function(callback) {
 },
 
 bmwiremote.prototype.setState = function(state, callback) {
+	console.log("Set state to ", state);
 	var lockState = (state == Characteristic.LockTargetState.SECURED) ? "lock" : "unlock";
 	this.log("Set state to ", lockState);
-	console.log("Set state to ", lockState);
 
    	this.lockRequest(state, function(err) {
 			if (err) {
@@ -66,7 +66,11 @@ bmwiremote.prototype.setState = function(state, callback) {
 },
 
 bmwiremote.prototype.lockRequest = function(state, callback) {
-		this.getauth(function(callback){
+		this.getauth(function(err){
+			if (err) {
+				callback(err);
+			}
+
 				var callLockstate = (state == Characteristic.LockCurrentState.SECURED) ? "DOOR_LOCK" : "DOOR_UNLOCK";
 				request.post({
 					url: 'https://b2vapi.bmwgroup.us/webapi/v1/user/vehicles/' + this.vin + '/executeService',
@@ -80,7 +84,6 @@ bmwiremote.prototype.lockRequest = function(state, callback) {
 				},function(err, response, body) {
 						console.log(' set REQUEST RESULTS:', err, response.statusCode, body);
 						 if (!err && response.statusCode == 200) {
-							 console.log(body);
 							 callback(null);
 						 }else{
 							 callback( new Error(esponse.statusCode));
@@ -94,7 +97,7 @@ bmwiremote.prototype.getServices = function() {
 	return [this.lockservice];
 },
 
-bmwiremote.prototype.getauth = function (callback) {
+bmwiremote.prototype.getauth = function(callback) {
 	if (this.needsAuthRefresh()) {
 			request.post({
 				url: 'https://b2vapi.bmwgroup.us/webapi/oauth/token/',
