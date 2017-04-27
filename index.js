@@ -48,13 +48,13 @@ bmwiremote.prototype.getState = function(callback) {
 },
 
 bmwiremote.prototype.setState = function(state, callback) {
-	console.log("Set state to ", state);
 	var lockState = (state == Characteristic.LockTargetState.SECURED) ? "lock" : "unlock";
 	this.log("Set state to ", lockState);
 
    	this.lockRequest(state, function(err) {
 			if (err) {
-				callback(err);
+				callback(null);
+				return
 			}
 
 		this.log("Success ", (lockState == "lock" ? "locking" : "unlocking"));
