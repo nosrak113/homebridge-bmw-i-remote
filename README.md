@@ -12,6 +12,7 @@ Control your locks on your BMW I Cars
         "username": "youremail@domain.com",
         "password": "ABC123",
         "authbasic": "ABC123==",
+        "securityQuestionSecret" :"ABC2134"
         "defaultState": "lock",
 
 }
@@ -27,6 +28,7 @@ Control your locks on your BMW I Cars
 | `password`                       | password for BMW's Connected Drive service              |     ✓    |
 | `authbasic`                      | Basic Auth for BMW's oAuth2 servers                     |     ✓    |
 | `defaultState`                   | Assume the car is locked on startup                     |     ✓    |
+| `securityQuestionSecret`         | Answer to the account security question                 |     ✓    |
 
 
 ## Basic Auth
