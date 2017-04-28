@@ -37,13 +37,14 @@ function bmwiremote(log, config) {
 
 bmwiremote.prototype.getState = function(callback) {
 	this.log("current lock state is " + this.currentState);
-	this.getauth(function(err){
-		this.log("got the callback");
-				if (err){
-					this.log("Auth Error: " + err)
-				}
-				callback(null, this.currentState);
-	}.bind(this));
+	callback(null, this.currentState);
+	// this.getauth(function(err){
+	// 	this.log("got the callback");
+	// 			if (err){
+	// 				this.log("Auth Error: " + err)
+	// 			}
+	// 			callback(null, this.currentState);
+	// }.bind(this));
 },
 
 bmwiremote.prototype.setState = function(state, callback) {
