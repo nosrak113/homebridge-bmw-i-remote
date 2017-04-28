@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-udp-lock",
+  "name": "homebridge-bmw-i-remote",
   "version": "0.1.0",
   "author": "nosrak113",
   "description": "A Homebridge plugin to control BMW I Cars",
