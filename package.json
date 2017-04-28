@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bmw-i-remote",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "nosrak113",
   "description": "A Homebridge plugin to control BMW I Cars",
   "license": "MIT",
