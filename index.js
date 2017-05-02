@@ -1,5 +1,6 @@
 var request = require("request");
 var Service, Characteristic;
+// require('request-debug')(request);
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
@@ -12,16 +13,18 @@ function bmwiremote(log, config) {
 	this.log = log;
 	this.name = config["name"];
 	this.vin = config["vin"];
-  this.username = config["username"];
+    this.username = config["username"];
 	this.password = config["password"];
 	this.authbasic = config["authbasic"];
 	this.currentState = (config["defaultState"] == "lock") ? Characteristic.LockCurrentState.SECURED  : Characteristic.LockCurrentState.UNSECURED;
-	this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
+	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
 	this.authToken = "";
+
+	this.lastUpdate = 0;
 
 	this.lockservice = new Service.LockMechanism(this.name);
 
@@ -33,19 +36,27 @@ function bmwiremote(log, config) {
 		.getCharacteristic(Characteristic.LockTargetState)
 		.on('get', this.getState.bind(this))
 		.on('set', this.setState.bind(this));
+
+
+
+	this.stateRequest(function(err,state){
+		if (err){
+			if (err){this.log("Auth Error: " + err + "Check your creds")}
+			this.log("Current lock state is " + ((this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked"));
+		}else{
+			this.currentState = state
+			this.lockservice.setCharacteristic(Characteristic.LockCurrentState, this.currentState);
+			this.log("Current lock state is " + ((this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked"));
+		}
+	}.bind(this))
+
 }
 
 bmwiremote.prototype.getState = function(callback) {
-	this.log("current lock state is " + this.currentState);
-	callback(null, this.currentState);
-	// this.getauth(function(err){
-	// 	this.log("got the callback");
-	// 			if (err){
-	// 				this.log("Auth Error: " + err)
-	// 			}
-	// 			callback(null, this.currentState);
-	// }.bind(this));
+				this.log("Current lock state is " + ((this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked"));
+				callback(null, this.currentState);	
 },
+
 
 bmwiremote.prototype.setState = function(state, callback) {
 	var lockState = (state == Characteristic.LockTargetState.SECURED) ? "lock" : "unlock";
@@ -93,18 +104,45 @@ bmwiremote.prototype.lockRequest = function(state, callback) {
 		}.bind(this));
     },
 
+bmwiremote.prototype.stateRequest = function(callback) {
+		this.getauth(function(err){
+			if (err) {
+				callback(err,this.currentState);
+			}
+
+				request.get({
+					url: 'https://b2vapi.bmwgroup.us/webapi/v1/user/vehicles/' + this.vin +"/status",
+					headers: {
+	    			'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
+					'Authorization': 'Bearer ' + this.authToken,
+				},
+				},function(err, response, body) {
+						 if (!err && response.statusCode == 200) {
+							//  console.log(' resp', err, response.statusCode, body);
+							  var state = JSON.parse(body);
+							  var cState = (state["vehicleStatus"]["doorLockState"] == "UNLOCKED") ? Characteristic.LockCurrentState.UNSECURED  : Characteristic.LockCurrentState.SECURED;
+							 callback(null,cState);
+						 }else{
+							 callback( new Error(response.statusCode),this.currentState);
+							 console.log(' ERROR REQUEST RESULTS:', err, response.statusCode, body);
+						 }
+				}.bind(this));
+		}.bind(this));
+    },	
+
 
 bmwiremote.prototype.getServices = function() {
 	return [this.lockservice];
 },
 
 bmwiremote.prototype.getauth = function(callback) {
-	if (this.needsAuthRefresh()) {
+	if (this.needsAuthRefresh() === true) {
+		this.log ('Gettin Auth Token');
 			request.post({
 				url: 'https://b2vapi.bmwgroup.us/webapi/oauth/token/',
 				headers: {
 				'Content-Type' : 'application/x-www-form-urlencoded',
-    		'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
+    			'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
 				'Authorization': 'Basic ' + this.authbasic,
   			},
 				form: {
@@ -121,8 +159,8 @@ bmwiremote.prototype.getauth = function(callback) {
 
 					 this.refreshToken = tokens["refresh_token"];
 					 this.authToken = tokens["access_token"];
-					 this.refreshtime =  n + tokens["expires_in"];
-					 this.log ('Got Auth: ' + this.authToken.substr(0,5));
+					 this.refreshtime =  n + tokens["expires_in"] * 1000;
+					 this.log ('Got Auth Token: ' + this.authToken.substr(0,5));
 					 callback(null);
 				 }
 				 else{
@@ -138,12 +176,11 @@ bmwiremote.prototype.getauth = function(callback) {
 },
 
 bmwiremote.prototype.needsAuthRefresh = function () {
-	var d = new Date();
-  var n = d.getTime();
-// console.log(n);
-// console.log(this.refreshtime);
-
-	if (n > this.refreshtime) {
+	var currentDate = new Date();
+  	var now = currentDate.getTime();
+ 	// console.log("Now   :" + now);
+ 	// console.log("Later :" + this.refreshtime);
+	if (now > this.refreshtime) {
 		return true;
 	}
 	return false;
