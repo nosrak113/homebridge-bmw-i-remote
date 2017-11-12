@@ -138,7 +138,7 @@ bmwiremote.prototype.getServices = function() {
 
 bmwiremote.prototype.getauth = function(callback) {
 	if (this.needsAuthRefresh() === true) {
-		this.log ('Gettin Auth Token');
+		this.log ('Getting Auth Token');
 			request.post({
 				url: 'https://b2vapi.bmwgroup.us/webapi/oauth/token/',
 				headers: {
@@ -179,6 +179,7 @@ bmwiremote.prototype.getauth = function(callback) {
 bmwiremote.prototype.needsAuthRefresh = function () {
 	var currentDate = new Date();
   	var now = currentDate.getTime();
+		this.log('now: '+ now);
  	// console.log("Now   :" + now);
  	// console.log("Later :" + this.refreshtime);
 	if (now > this.refreshtime) {
