@@ -12,7 +12,8 @@ Control your locks on your BMW I Cars
         "username": "youremail@domain.com",
         "password": "ABC123",
         "authbasic": "ABC123==",
-        "securityQuestionSecret" :"ABC2134"
+        "authtoken": "ABC123",
+        "securityQuestionSecret" :"ABC2134",
         "defaultState": "lock",
 
 }
@@ -29,9 +30,13 @@ Control your locks on your BMW I Cars
 | `authbasic`                      | Basic Auth for BMW's oAuth2 servers                     |     ✓    |
 | `defaultState`                   | Assume the car is locked on startup                     |     ✓    |
 | `securityQuestionSecret`         | Answer to the account security question                 |     ✓    |
+| `authtoken`         | Security Token obtained from App              |         |
 
 
 ## Basic Auth
+
+This is a fork from the original script written by nosrak113 (homebridge-bmw-i-remote) - WORK IN PROGRESS
+
 These API calls are designed to allow you to interact with your BMW i3.  They were reverse engineered from [the official BMW i Remote Android app](https://play.google.com/store/apps/details?id=com.bmwi.remote).
 
 Your use of these API calls is entirely at your own risk.  They are neither officially provided nor sanctioned.
@@ -64,5 +69,5 @@ See [edent/BMW-i-Remote](https://github.com/edent/BMW-i-Remote) for more info
 ## Installation
 
 1. Install homebridge using: `npm install -g homebridge`
-2. Install this plugin using: `npm install -g homebridge-bmw-i-remote`
+2. Install this plugin using: `npm install -g homebridge-bmw-connected`
 3. Update your config file

@@ -6,7 +6,7 @@ module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 
-	homebridge.registerAccessory("homebridge-bmw-i-remote", "BMWIRemote", bmwiremote);
+	homebridge.registerAccessory("homebridge-bmw-connected", "BMWIRemote", bmwiremote);
 };
 
 function bmwiremote(log, config) {
