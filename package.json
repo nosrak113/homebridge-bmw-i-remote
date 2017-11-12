@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bmw-connected",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "author": "needlerp",
   "description": "A Homebridge plugin to control BMW Connected Drive Cars",
   "license": "MIT",
