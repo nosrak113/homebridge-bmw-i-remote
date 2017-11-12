@@ -16,13 +16,14 @@ function bmwiremote(log, config) {
     this.username = config["username"];
 	this.password = config["password"];
 	this.authbasic = config["authbasic"];
+	this.authtoken = config("authtoken")
 	this.currentState = (config["defaultState"] == "lock") ? Characteristic.LockCurrentState.SECURED  : Characteristic.LockCurrentState.UNSECURED;
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
-	this.authToken = "";
+	//this.authToken = "";
 
 	this.lastUpdate = 0;
 
@@ -54,7 +55,7 @@ function bmwiremote(log, config) {
 
 bmwiremote.prototype.getState = function(callback) {
 				this.log("Current lock state is " + ((this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked"));
-				callback(null, this.currentState);	
+				callback(null, this.currentState);
 },
 
 
@@ -128,7 +129,7 @@ bmwiremote.prototype.stateRequest = function(callback) {
 						 }
 				}.bind(this));
 		}.bind(this));
-    },	
+    },
 
 
 bmwiremote.prototype.getServices = function() {
