@@ -16,7 +16,7 @@ function bmwiremote(log, config) {
     this.username = config["username"];
 	this.password = config["password"];
 	this.authbasic = config["authbasic"];
-	this.authtoken = config("authtoken")
+	this.authtoken = config["authtoken"];
 	this.currentState = (config["defaultState"] == "lock") ? Characteristic.LockCurrentState.SECURED  : Characteristic.LockCurrentState.UNSECURED;
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
