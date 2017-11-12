@@ -13,13 +13,15 @@ function bmwiremote(log, config) {
 	this.log = log;
 	this.name = config["name"];
 	this.vin = config["vin"];
-    this.username = config["username"];
+  this.username = config["username"];
 	this.password = config["password"];
 	this.authbasic = config["authbasic"];
 	this.authtoken = config["authtoken"];
 	this.currentState = (config["defaultState"] == "lock") ? Characteristic.LockCurrentState.SECURED  : Characteristic.LockCurrentState.UNSECURED;
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
+
+	this.log("0.1.14");
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
@@ -85,7 +87,7 @@ bmwiremote.prototype.lockRequest = function(state, callback) {
 
 				var callLockstate = (state == Characteristic.LockCurrentState.SECURED) ? "DOOR_LOCK" : "DOOR_UNLOCK";
 				request.post({
-					url: 'https://b2vapi.bmwgroup.us/webapi/v1/user/vehicles/' + this.vin + '/executeService',
+					url: 'https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/' + this.vin + '/executeService',
 					headers: {
 	    		'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
 					'Authorization': 'Bearer ' + this.authToken,
@@ -112,9 +114,9 @@ bmwiremote.prototype.stateRequest = function(callback) {
 			}
 
 				request.get({
-					url: 'https://b2vapi.bmwgroup.us/webapi/v1/user/vehicles/' + this.vin +"/status",
+					url: 'https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/' + this.vin +"/status",
 					headers: {
-	    			'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
+	    			'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 11.0; Scale/2.00)',
 					'Authorization': 'Bearer ' + this.authToken,
 				},
 				},function(err, response, body) {
@@ -140,20 +142,28 @@ bmwiremote.prototype.getauth = function(callback) {
 	if (this.needsAuthRefresh() === true) {
 		this.log ('Getting Auth Token');
 			request.post({
-				url: 'https://b2vapi.bmwgroup.us/webapi/oauth/token/',
+				url: 'https://customer.bmwgroup.com/gcdm/oauth/authenticate',
 				headers: {
+				'Host':	'customer.bmwgroup.com',
+				'Origin':	'https://customer.bmwgroup.com',
+				'Accept-Encoding':	'br, gzip, deflate',
 				'Content-Type' : 'application/x-www-form-urlencoded',
-    			'User-Agent': 'MCVApp/1.5.2 (iPhone; iOS 9.1; Scale/2.00)',
-				'Authorization': 'Basic ' + this.authbasic,
+    		'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_1 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Version/11.0 Mobile/15B150 Safari/604.1',
+				'Origin': 'https://customer.bmwgroup.com',
+				//'Authorization': 'Basic ' + this.authbasic,
   			},
 				form: {
 					'username': this.username,
 					'password': this.password,
-					'scope':'remote_services vehicle_data',
-					'grant_type':'password'
+					'client_id':'dbf0a542-ebd1-4ff0-a9a7-55172fbfce35',
+					'response_type': 'code',
+					'redirect_uri':	'https://www.bmw-connecteddrive.com/app/default/static/external-dispatch.html',
+					'scope': 'authenticate_user fupo',
+					'state': 'eyJtYXJrZXQiOiJnYiIsImxhbmd1YWdlIjoiZW4iLCJkZXN0aW5hdGlvbiI6ImxhbmRpbmdQYWdlIiwicGFyYW1ldGVycyI6Int9In0',
+					'locale': 'GB-en'
 				}
 			},function(err, response, body) {
-				 if (!err && response.statusCode == 200) {
+				 if (!err && response.statusCode == 302) {
 					 var tokens = JSON.parse(body);
 					 var d = new Date();
 				   var n = d.getTime();
@@ -165,6 +175,7 @@ bmwiremote.prototype.getauth = function(callback) {
 					 callback(null);
 				 }
 				 else{
+				this.log('Error getting Auth Token');
 				 callback(response.statusCode);
 			 			}
 				}.bind(this)
@@ -179,7 +190,6 @@ bmwiremote.prototype.getauth = function(callback) {
 bmwiremote.prototype.needsAuthRefresh = function () {
 	var currentDate = new Date();
   	var now = currentDate.getTime();
-		this.log('now: '+ now);
  	// console.log("Now   :" + now);
  	// console.log("Later :" + this.refreshtime);
 	if (now > this.refreshtime) {
