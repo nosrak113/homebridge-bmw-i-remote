@@ -1,7 +1,11 @@
 {
   "name": "homebridge-bmw-connected",
-  "version": "0.1.17",
+  "version": "0.1.21",
   "author": "needlerp",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha index.js"
+  },
   "description": "A Homebridge plugin to control BMW Connected Drive Cars",
   "license": "MIT",
   "homepage": "https://github.com/needlerp/homebridge-bmw-connected#readme",
@@ -21,8 +25,14 @@
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "log": "^1.4.0",
+    "request": "^2.83.0"
+  },
   "bugs": {
     "url": "https://github.com/needlerp/homebridge-bmw-connected/issues"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1"
   }
 }
