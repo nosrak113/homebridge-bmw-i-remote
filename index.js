@@ -156,7 +156,7 @@ bmwiremote.prototype.getauth = function(callback) {
 					'username': this.username,
 					'password': this.password,
 					'client_id':'dbf0a542-ebd1-4ff0-a9a7-55172fbfce35',
-					'response_type': 'code',
+					'response_type': 'token',
 					'redirect_uri':	'https://www.bmw-connecteddrive.com/app/default/static/external-dispatch.html',
 					'scope': 'authenticate_user fupo',
 					'state': 'eyJtYXJrZXQiOiJnYiIsImxhbmd1YWdlIjoiZW4iLCJkZXN0aW5hdGlvbiI6ImxhbmRpbmdQYWdlIiwicGFyYW1ldGVycyI6Int9In0',
