@@ -4,7 +4,7 @@
   "author": "needlerp",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha index.js"
+    "debug": "node --inspect index.js"
   },
   "description": "A Homebridge plugin to control BMW Connected Drive Cars",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
+    "debug": "^3.1.0",
     "log": "^1.4.0",
     "request": "^2.83.0"
   },

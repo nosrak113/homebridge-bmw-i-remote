@@ -1,4 +1,5 @@
 var request = require("request");
+var debug = require('debug')('Debug');
 var Service, Characteristic;
 // require('request-debug')(request);
 
@@ -9,19 +10,22 @@ module.exports = function(homebridge) {
 	homebridge.registerAccessory("homebridge-bmw-connected", "BMWIRemote", bmwiremote);
 };
 
+debug('Booting App');
+
 function bmwiremote(log, config) {
 	this.log = log;
 	this.name = config["name"];
 	this.vin = config["vin"];
   this.username = config["username"];
 	this.password = config["password"];
-	this.authbasic = config["authbasic"];
 	this.authtoken = config["authtoken"];
+	this.client_id = config["client_id"];
 	this.currentState = (config["defaultState"] == "lock") ? Characteristic.LockCurrentState.SECURED  : Characteristic.LockCurrentState.UNSECURED;
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
 
 	this.log("0.1.23");
+	debug('0.1.24');
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
@@ -155,7 +159,7 @@ bmwiremote.prototype.getauth = function(callback) {
 				form: {
 					'username': this.username,
 					'password': this.password,
-					'client_id':'dbf0a542-ebd1-4ff0-a9a7-55172fbfce35',
+					'client_id':this.client_id,
 					'response_type': 'token',
 					'redirect_uri':	'https://www.bmw-connecteddrive.com/app/default/static/external-dispatch.html',
 					'scope': 'authenticate_user fupo',
@@ -165,16 +169,19 @@ bmwiremote.prototype.getauth = function(callback) {
 			},function(err, response, body) {
 				 if (!err && response.statusCode == 302) {
 					 this.log('Auth Success!: ');
+					 debug('Auth Success');
 					 //this.log(body);
 					 //var tokens = JSON.parse(body);
 					 //this.log(tokens);
 					 var d = new Date();
 				   var n = d.getTime();
-					 this.log(response.headers['location']);
+					 debug(response.headers['location']);
+					 var location = response.headers['location'];
 					 //this.refreshToken = tokens["refresh_token"];
-					 //this.authToken = tokens["access_token"];
+					 this.authToken = location["access_token"];
+					 this.log ('Got Auth Token: ' + this.authToken);
 					 //this.refreshtime =  n + tokens["expires_in"] * 1000;
-					 this.log ('Got Auth Token: ' + this.authToken.substr(0,5));
+					 //this.log ('Got Auth Token: ' + this.authToken.substr(0,5));
 					 callback(null);
 				 }
 				 else{
