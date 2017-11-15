@@ -1,5 +1,6 @@
 var request = require("request");
 var debug = require('debug')('Debug');
+const URL = require('url');
 var Service, Characteristic;
 // require('request-debug')(request);
 
@@ -24,7 +25,7 @@ function bmwiremote(log, config) {
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
 
-	this.log("0.1.27");
+	this.log("0.1.30");
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
@@ -175,11 +176,9 @@ bmwiremote.prototype.getauth = function(callback) {
 				   var n = d.getTime();
 					 this.log(response.headers['location']);
 					 var location = response.headers['location'];
-					 const myURL = new URL('https://example.org/?abc=123');
-					 this.authToken=location.searchParams.get('access_token');
-					 this.log
+					 const myURL = url.parse(location);
+					 this.authToken=myURL.searchParams.get('access_token');
 					 //console.log(myURL.searchParams.get('abc'));
-
 					 //this.refreshToken = tokens["refresh_token"];
 					 this.log ('Got Auth Token: ' + this.authToken);
 					 //this.refreshtime =  n + tokens["expires_in"] * 1000;
