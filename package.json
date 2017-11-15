@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bmw-connected",
-  "version": "0.1.30",
+  "version": "0.1.32",
   "author": "needlerp",
   "scripts": {
     "start": "node index.js",
