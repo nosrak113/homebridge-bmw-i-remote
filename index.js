@@ -24,7 +24,7 @@ function bmwiremote(log, config) {
 	// this.log("locked = " + (this.currentState == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked");
 	this.securityQuestionSecret = config["securityQuestionSecret"]
 
-	this.log("0.1.26");
+	this.log("0.1.27");
 
 	this.refreshToken = "";
 	this.refreshtime = 0;
@@ -175,8 +175,12 @@ bmwiremote.prototype.getauth = function(callback) {
 				   var n = d.getTime();
 					 this.log(response.headers['location']);
 					 var location = response.headers['location'];
+					 const myURL = new URL('https://example.org/?abc=123');
+					 this.authToken=location.searchParams.get('access_token');
+					 this.log
+					 //console.log(myURL.searchParams.get('abc'));
+
 					 //this.refreshToken = tokens["refresh_token"];
-					 this.authToken = location["access_token"];
 					 this.log ('Got Auth Token: ' + this.authToken);
 					 //this.refreshtime =  n + tokens["expires_in"] * 1000;
 					 //this.log ('Got Auth Token: ' + this.authToken.substr(0,5));
