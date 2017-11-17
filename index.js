@@ -107,13 +107,8 @@ BMWConnected.prototype.getExecution = function(callback) {
   }, function(err, response, body) {
 
     if (!err && response.statusCode == 200) {
-      //var json = JSON.parse(body);
-      //var commandtype = (json["remoteServiceType"]);
-      //var execution = (json["remoteServiceStatus"]);
-      //var state = json.state; // "lock" or "unlock"
       this.log('Success!');
 
-      //callback(null, execution); // success
       callback(null); // success
     }
     else {
@@ -129,15 +124,12 @@ function myRetryStrategy(err, response, body){
   var json = JSON.parse(body);
   var commandtype = (json["remoteServiceType"]);
   var execution = (json["remoteServiceStatus"]);
-  //var state = json.state; // "lock" or "unlock"
-  //console.log(execution);
 
   return err || execution === "PENDING" || execution ==="DELIVERED_TO_VEHICLE"
 }
 
 
 BMWConnected.prototype.setState = function(state, callback) {
-  //var bmwState = (state == Characteristic.LockTargetState.SECURED) ? "lock" : "unlock";
   var bmwState = (state == Characteristic.LockTargetState.SECURED) ? "RDL" : "RDU";
 
   this.log("Sending Command %s", bmwState);

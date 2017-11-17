@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bmw-connected",
-  "version": "0.1.62",
+  "version": "1.0.0",
   "author": "needlerp",
   "scripts": {
     "start": "node index.js"
@@ -25,7 +25,6 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "debug": "^3.1.0",
     "log": "^1.4.0",
     "request": "^2.83.0",
     "requestretry": "^1.12.2"
